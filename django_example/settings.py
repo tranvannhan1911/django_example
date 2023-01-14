@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-u^%k_)50!f+y3xz&)lubk(-(&r3e-@ojwvalzx19t6sk!agwuh
 
 # AWS System Manager
 import boto3
-ssm = boto3.client('ssm')
+ssm = boto3.client('ssm', region_name='ap-southeast-1')
 def _get_ssm_key(name):
   key = ssm.get_parameter(Name=name, WithDecryption=True)
   return key['Parameter']['Value']
