@@ -22,6 +22,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-u^%k_)50!f+y3xz&)lubk(-(&r3e-@ojwvalzx19t6sk!agwuh'
 
+# AWS System Manager
+import boto3
+ssm = boto3.client('ssm')
+def _get_ssm_key(name):
+  key = ssm.get_parameter(Name=name, WithDecryption=True)
+  return key['Parameter']['Value']
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -73,13 +80,18 @@ WSGI_APPLICATION = 'django_example.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+  
+MYSQL_HOST = _get_ssm_key('/django_example/mysql_host')
+MYSQL_NAME = _get_ssm_key('/django_example/mysql_name')
+MYSQL_USER = _get_ssm_key('/django_example/mysql_user')
+MYSQL_PASS = _get_ssm_key('/django_example/mysql_pass')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_example',
-        'USER': 'django_example',
-        'PASSWORD': 'django_example',
-        'HOST': '127.0.0.1',
+        'NAME': MYSQL_NAME,
+        'USER': MYSQL_USER,
+        'PASSWORD': MYSQL_PASS,
+        'HOST': MYSQL_HOST,
         'PORT': 3306,
         'OPTIONS': {
             'charset': 'utf8mb4',
